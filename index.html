@@ -24,7 +24,7 @@
 </head>
 <body>
   <canvas id="carCanvas" width="800" height="600"></canvas>
-  <div id="hud">Speed: 0 km/h</div>
+  <div id="hud">Speed: 0.0 km/h</div>
 
   <script>
     const canvas = document.getElementById("carCanvas");
@@ -32,10 +32,10 @@
     const hud = document.getElementById("hud");
 
     const carImage = new Image();
-    carImage.src = "https://i.imgur.com/7QFf5rU.png";
+    carImage.src = "https://raw.githubusercontent.com/mauriciopoppe/car-physics/master/assets/car.png";
 
     const bgImage = new Image();
-    bgImage.src = "https://i.imgur.com/oT9T9WN.png";
+    bgImage.src = "https://raw.githubusercontent.com/mauriciopoppe/car-physics/master/assets/asphalt.jpg";
 
     class Car {
       constructor(x, y) {
