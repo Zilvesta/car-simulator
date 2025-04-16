@@ -37,6 +37,22 @@
     const bgImage = new Image();
     bgImage.src = "https://raw.githubusercontent.com/mauriciopoppe/car-physics/master/assets/asphalt.jpg";
 
+    let bgPattern = null;
+
+    carImage.onload = checkReady;
+    bgImage.onload = checkReady;
+
+    let imagesLoaded = 0;
+
+    function checkReady() {
+      imagesLoaded++;
+      if (imagesLoaded === 2) {
+        // Create the asphalt pattern once background is loaded
+        bgPattern = ctx.createPattern(bgImage, 'repeat');
+        animate();
+      }
+    }
+
     class Car {
       constructor(x, y) {
         this.x = x;
@@ -115,9 +131,10 @@
     });
 
     function drawBackground() {
-      const pattern = ctx.createPattern(bgImage, 'repeat');
-      ctx.fillStyle = pattern;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (bgPattern) {
+        ctx.fillStyle = bgPattern;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
     }
 
     function animate() {
@@ -131,10 +148,6 @@
 
       requestAnimationFrame(animate);
     }
-
-    bgImage.onload = () => {
-      animate();
-    };
   </script>
 </body>
 </html>
