@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Realistic Car Simulator</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #111; }
+    canvas { display: block; margin: 0 auto; background: #2c3e50; }
+  </style>
+</head>
+<body>
+  <canvas id="carCanvas" width="800" height="600"></canvas>
+
+  <script>
+    const canvas = document.getElementById("carCanvas");
+    const ctx = canvas.getContext("2d");
+
+    class Car {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 50;
+        this.height = 30;
+        this.angle = 0;
+        this.speed = 0;
+        this.acceleration = 0.2;
+        this.maxSpeed = 5;
+        this.friction = 0.05;
+        this.turnSpeed = 0.03;
+        this.controls = {
+          forward: false,
+          backward: false,
+          left: false,
+          right: false,
+        };
+      }
+
+      update() {
+        if (this.controls.forward) {
+          this.speed += this.acceleration;
+        }
+        if (this.controls.backward) {
+          this.speed -= this.acceleration;
+        }
+
+        // Clamp speed
+        if (this.speed > this.maxSpeed) this.speed = this.maxSpeed;
+        if (this.speed < -this.maxSpeed / 2) this.speed = -this.maxSpeed / 2;
+
+        // Apply friction
+        if (this.speed > 0) {
+          this.speed -= this.friction;
+          if (this.speed < 0) this.speed = 0;
+        }
+        if (this.speed < 0) {
+          this.speed += this.friction;
+          if (this.speed > 0) this.speed = 0;
+        }
+
+        // Steering
+        if (this.speed !== 0) {
+          const flip = this.speed > 0 ? 1 : -1;
+          if (this.controls.left) {
+            this.angle -= this.turnSpeed * flip;
+          }
+          if (this.controls.right) {
+            this.angle += this.turnSpeed * flip;
+          }
+        }
+
+        // Move car
+        this.x += Math.sin(this.angle) * this.speed;
+        this.y -= Math.cos(this.angle) * this.speed;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle);
+        ctx.fillStyle = "#f39c12";
+        ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+        ctx.restore();
+      }
+    }
+
+    const car = new Car(400, 300);
+
+    document.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowUp":
+        case "w": car.controls.forward = true; break;
+        case "ArrowDown":
+        case "s": car.controls.backward = true; break;
+        case "ArrowLeft":
+        case "a": car.controls.left = true; break;
+        case "ArrowRight":
+        case "d": car.controls.right = true; break;
+      }
+    });
+
+    document.addEventListener("keyup", (e) => {
+      switch (e.key) {
+        case "ArrowUp":
+        case "w": car.controls.forward = false; break;
+        case "ArrowDown":
+        case "s": car.controls.backward = false; break;
+        case "ArrowLeft":
+        case "a": car.controls.left = false; break;
+        case "ArrowRight":
+        case "d": car.controls.right = false; break;
+      }
+    });
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      car.update();
+      car.draw(ctx);
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
